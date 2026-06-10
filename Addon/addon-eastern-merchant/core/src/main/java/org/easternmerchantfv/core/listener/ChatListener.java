@@ -13,6 +13,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Locale;
+import java.time.Instant;
 
 import com.google.gson.JsonObject;
 
@@ -20,7 +21,7 @@ public class ChatListener {
 
   private static final String TARGET_SERVER_HOST_DK = "mc.freakyville.dk";
   private static final String TARGET_SERVER_HOST_NET = "mc.freakyville.net";
-  private static final String API_ENDPOINT = "http://localhost:3000/api/members";
+  private static final String API_ENDPOINT = "http://localhost:3000/api/addon-msg";
   private static final String START_MARKER = "-={";
   private static final String END_MARKER = "Medlemmer:";
 
@@ -28,6 +29,7 @@ public class ChatListener {
 
   private boolean capturing = false;
   private final StringBuilder capturedBlock = new StringBuilder();
+  private Instant captureStartTime;
 
   private final HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -50,14 +52,15 @@ public class ChatListener {
     this.addon = addon;
   }
 
-  private void sendToServer(String data) {
-    if (data == null || data.isBlank()) {
-      addon.logger().warn("Skipped sending empty member block");
+  private void sendToServer(String data, Instant timestamp) {
+    if (data == null || data.isBlank() || timestamp == null) {
+      addon.logger().warn("Skipped sending empty member block or null timestamp");
       return;
     }
 
     JsonObject jsonObject = new JsonObject();
     jsonObject.addProperty("cell", data);
+    jsonObject.addProperty("timestamp", timestamp.toString());
 
     String json = jsonObject.toString();
 
@@ -123,6 +126,7 @@ public class ChatListener {
       && isServerSystemMessage(chatMessage)
       && !hasNamePrefixBeforeMarker(msg, START_MARKER)) {
       capturing = true;
+      captureStartTime = Instant.now();
       addon.logger().info("Started capturing chat block");
       capturedBlock.setLength(0);
       appendLine(msg);
@@ -137,7 +141,7 @@ public class ChatListener {
       String payload = capturedBlock.toString().trim();
       addon.logger().info("Captured block:\n" + payload);
       addon.logger().info("Stopped capturing chat block");
-      sendToServer(payload);
+      sendToServer(payload, captureStartTime);
       resetCapture();
       return;
     }

@@ -5,7 +5,7 @@ export default function App() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const response = fetch("http://localhost:3000/api/message")
+    const response = fetch("http://localhost:3000/api/front")
       .then(res => res.json())
       .then(data => {
         setMessage(data);
@@ -21,6 +21,7 @@ export default function App() {
         <div>
           <p>{message.text}</p>
           <p>{message.time}</p>
+          <p>{JSON.stringify(message)}</p>
         </div>
       )}
     </div>
