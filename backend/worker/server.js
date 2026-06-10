@@ -67,31 +67,70 @@ function processData(data, timestamp) {
       }
 }
 
+function extractDataBaseData(data) {
+  return {
+    id: data.id,
+    owner: data.owner,
+    time_remaining: data.time_remaining,
+    blok: data.blok,
+    type: data.type,
+    last_addon_updated: data.last_addon_updated
+  };
+}
+
+function makeDatabaseResponseReady(data) {
+  const dataToFrontend = extractDataBaseData(data);
+
+  const myTime = new Date();
+  const lastUpdated = new Date(dataToFrontend.last_addon_updated);
+  const expiresAt = new Date(lastUpdated.getTime() + dataToFrontend.time_remaining * 60000);
+  const timeRemaining = Math.max(0, Math.round((expiresAt - myTime) / 60000));
+
+  dataToFrontend.time_remaining = timeRemaining;
+  return dataToFrontend;
+}
+
 app.post("/api/addon-msg", async (req, res) => {
     const cellData = req.body.cell;
     const last_addon_updated = req.body.timestamp;
     const processDataResult = processData(cellData, last_addon_updated);
-    console.log("Received data:", processDataResult);
 
   if (!processDataResult) {
     console.warn("Failed to process data, skipping database insert");
     return res.status(400).json({ error: "Invalid data format" });
   }
 
-  console.log("Inserting into database:", processDataResult);
   const { data, error } = await supabase
     .from("ce_info")
     .upsert(processDataResult, { onConflict: "id" });
 
-    console.log("Database response:", { data, error });
     return res.json({ success: !error, error });
 });
 
 // API endpoint
-app.get("/api/front", (req, res) => {
-  res.json({
-    time: new Date().toLocaleTimeString()
-  });
+app.get("/api/front", async (req, res) => {
+  const { blok, type } = req.query;
+  
+  let query = supabase
+    .from("ce_info")
+    .select("*");
+
+  if (blok) {
+    query = query.eq("blok", blok);
+  }
+  if (type) {
+    query = query.eq("type", type);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  const responseData = data.map(makeDatabaseResponseReady);
+
+  return res.json(responseData);
 });
 
 app.listen(PORT, () => {

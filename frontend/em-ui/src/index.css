@@ -1,0 +1,78 @@
+body {
+ background-color: #282c34;
+}
+
+.blok-container {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    margin: 0;
+}
+
+.blok-btn {
+    width: 200px;
+    height: 100px;
+    border: none;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    cursor: pointer;
+    font-size: 24px;
+    color: white;
+    margin: 0;
+}
+
+.type-container {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    margin-top: 20px;
+    background-color: #3e3f44;
+    margin: 0 10px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 25px 25px 0 25px;
+}
+
+.type-btn {
+    width: 100px;
+    height: 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.data-display {
+    margin-top: 20px;
+    background-color: #727479;
+    margin: 0 10px;
+    border-radius: 20px;
+    padding: 25px;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.cell-blok {
+    text-align: left;
+    border: 1px solid white;
+    padding: 10px;
+    border-radius: 10px;
+    width: 150px;
+}
+
+h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    text-decoration: underline;
+}
+
+p {
+    font-size: 18px;
+    margin: 5px 0;
+}
