@@ -54,10 +54,11 @@ function processData(data, timestamp) {
     const cleanId = extractedData.id.replace(/\d+$/, "");
     const { blok, type } = cellTypes[cleanId] || {};
     if (blok && type) {
+      const expires_at = new Date(new Date(timestamp).getTime() + time * 60000).toISOString();
       return {
         id: extractedData.id,
         owner: extractedData.owner,
-        time_remaining: time,
+        expires_at,
         blok,
         type,
         last_addon_updated: timestamp
@@ -67,27 +68,15 @@ function processData(data, timestamp) {
       }
 }
 
-function extractDataBaseData(data) {
+function makeDatabaseResponseReady(data) {
+  const timeRemaining = Math.max(0, Math.round((new Date(data.expires_at) - new Date()) / 60000));
   return {
     id: data.id,
     owner: data.owner,
-    time_remaining: data.time_remaining,
+    time_remaining: timeRemaining,
     blok: data.blok,
-    type: data.type,
-    last_addon_updated: data.last_addon_updated
+    type: data.type
   };
-}
-
-function makeDatabaseResponseReady(data) {
-  const dataToFrontend = extractDataBaseData(data);
-
-  const myTime = new Date();
-  const lastUpdated = new Date(dataToFrontend.last_addon_updated);
-  const expiresAt = new Date(lastUpdated.getTime() + dataToFrontend.time_remaining * 60000);
-  const timeRemaining = Math.max(0, Math.round((expiresAt - myTime) / 60000));
-
-  dataToFrontend.time_remaining = timeRemaining;
-  return dataToFrontend;
 }
 
 app.post("/api/addon-msg", async (req, res) => {
@@ -109,17 +98,16 @@ app.post("/api/addon-msg", async (req, res) => {
 
 // API endpoint
 app.get("/api/front", async (req, res) => {
-  const { blok, type } = req.query;
-  
+  const { decision } = req.query;
+
   let query = supabase
     .from("ce_info")
     .select("*");
 
-  if (blok) {
-    query = query.eq("blok", blok);
-  }
-  if (type) {
-    query = query.eq("type", type);
+  if (decision === "true") {
+    const now = new Date().toISOString();
+    const in24h = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    query = query.gte("expires_at", now).lte("expires_at", in24h);
   }
 
   const { data, error } = await query;
