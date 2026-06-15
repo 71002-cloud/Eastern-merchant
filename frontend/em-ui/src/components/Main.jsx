@@ -6,18 +6,41 @@ import CellBlok from './CellBlok';
 
 export default function Main() {
     const [response, setResponse] = useState(null);
+    const [sortedResponse, setSortedResponse] = useState(null);
     const [underDay, setUnderDay] = useState(true);
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
-        getCellInfo(underDay).then(res => setResponse(res));
-    }, [underDay]);
+        getCellInfo().then(res => setResponse(res));
+    }, [0]);
 
     function handleSearchChange(event) {
         setSearchValue(event.target.value);
     }
 
-    const sortedResponse = response?.sort((a, b) => a.time_remaining - b.time_remaining);
+    function sort(response) {
+        if (underDay === true) {
+            const filteredResponse = response?.filter(cell => cell.time_remaining < 24 * 60 && cell.time_remaining != 0);
+            const sortedResponse = filteredResponse?.sort((a, b) => a.time_remaining - b.time_remaining);
+            setSortedResponse(sortedResponse);
+        } else {
+            const sortedResponse = response?.sort((a, b) => {
+                if (a.time_remaining === 0 && b.time_remaining !== 0) return 1;
+                if (b.time_remaining === 0 && a.time_remaining !== 0) return -1;
+                return a.time_remaining - b.time_remaining;
+            });
+            setSortedResponse(sortedResponse);
+        }
+    }
+
+    useEffect(() => {
+        sort(response);
+    }, [response, underDay]);
+
+    useEffect(() => {
+        const filteredResponse = response?.filter(cell => cell.id.toLowerCase().includes(searchValue.toLowerCase()));
+        sort(filteredResponse);
+    }, [searchValue]);
 
     const cellBloks = sortedResponse?.map(cell => (
         <CellBlok

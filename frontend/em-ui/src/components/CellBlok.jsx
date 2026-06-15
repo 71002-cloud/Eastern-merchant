@@ -19,24 +19,29 @@ export default function CellBlok(props) {
     const style = () => {
         if (props.time_remaining <= 0) {
             return { 
-                backgroundColor: '#9e9e9e',
-                color: '#bbbbbb',
-                border: '1px solid #777777'
+                border: '1px solid #3a3a3a',
+                backgroundColor: '#2a2a2a30',
+                color: '#555555'
              };
         } else if (props.time_remaining <= 60) {
             return {
-                border: '1px solid #ff0808'
+                border: '1px solid #1395b2',
+                backgroundColor: '#1395b255',
+                boxShadow: '0 0 8px #1395b270'
              }
         } else if (props.time_remaining <= 180) {
             return {
-                border: '1px solid #ffb300'
+                border: '1px solid #0f7a96',
+                backgroundColor: '#0f7a9645',
+                boxShadow: '0 0 6px #0a4d6080'
              }
         } else if (props.time_remaining <= 1440) {
             return {
-                border: '1px solid #f7ff00'
+                border: '1px solid #4a7a8a',
+                backgroundColor: '#4a7a8a38',
+                boxShadow: '0 0 4px #1a3a4260',
              }
         }
-        return {};
     }
 
     return (

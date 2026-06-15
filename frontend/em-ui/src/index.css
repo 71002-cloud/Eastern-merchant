@@ -1,18 +1,21 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #6f6e6e;
+    background: radial-gradient(ellipse 70% 60% at 50% 65%, #1e3440 0%, #1a2e38 40%, #111c22 100%);
+    min-height: 100vh;
     margin: 0;
     padding: 0;
+    color: #ddeef4;
 }
 
 header {
-    background-color: #333;
+    background-color: #162028;
     color: white;
     display: flex;
     align-items: center;
     padding: 10px 20px;
     justify-content: center;
-    box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #2a4a58;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
 
 h1 {
@@ -51,42 +54,61 @@ main {
     width: 100%;
     padding: 10px;
     border-radius: 20px;
-    border: none;
+    border: 1px solid #2a4a58;
+    background-color: #1e3440;
+    color: #ddeef4;
+}
+
+.search-bar::placeholder {
+    color: #4a7a8a;
 }
 
 .search-bar:focus {
     outline: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border-color: #1395b2;
+    box-shadow: 0 0 8px rgba(19, 149, 178, 0.3);
 }
 
 .filter-btn {
-    border: none;
+    border: 1px solid #2a4a58;
     border-radius: 15px;
     padding: 5px 10px;
     width: 40%;
+    background-color: #1e3440;
+    color: #ddeef4;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.filter-btn:hover {
+    border-color: #1395b2;
+    box-shadow: 0 0 6px rgba(19, 149, 178, 0.25);
 }
 
 .cell-display {
     display: flex;
     flex-wrap: wrap;
-    background-color: #4a4343;
+    background-color: #1e3440;
     border-radius: 10px;
-    height: 500px;
-    width: 100%;
+    width: 95%;
     margin-top: 20px;
-    border: 2px solid #333;
+    border: 1px solid #2a4a58;
     gap: 10px;
     padding: 10px;
     align-content: start;
     overflow-y: auto;
     scrollbar-width: thin;
+    scrollbar-color: #2a4a58 #1e3440;
+    justify-content: center;
 }
 
 .cell-blok {
-    border: 1px solid #c8c8c8;
+    border: 1px solid #2a4a52;
+    background-color: #243e48;
+    box-shadow: 0 1px 5px #0d1e22;
     width: 175px;
     height: 125px;
-    color: white;
+    color: #ddeef4;
     text-align: left;
     margin: 0;
     padding: 5px;

@@ -98,17 +98,9 @@ app.post("/api/addon-msg", async (req, res) => {
 
 // API endpoint
 app.get("/api/front", async (req, res) => {
-  const { decision } = req.query;
-
   let query = supabase
     .from("ce_info")
-    .select("*");
-
-  if (decision === "true") {
-    const now = new Date().toISOString();
-    const in24h = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-    query = query.gte("expires_at", now).lte("expires_at", in24h);
-  }
+    .select("id, owner, expires_at, blok, type");
 
   const { data, error } = await query;
 
