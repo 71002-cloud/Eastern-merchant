@@ -1,0 +1,53 @@
+name: LabyAddon Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+defaults:
+  run:
+    working-directory: Addon/addon-eastern-merchant
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          validate-wrappers: true
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build addon
+        run: ./gradlew build --full-stacktrace
+        env:
+          VERSION: ${{ env.VERSION }}
+
+      - name: Create release JAR
+        run: ./gradlew createReleaseJar
+        env:
+          VERSION: ${{ env.VERSION }}
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: Eastern Merchant FV ${{ github.ref_name }}
+          files: Addon/addon-eastern-merchant/build/libs/*-release.jar
+          generate_release_notes: true

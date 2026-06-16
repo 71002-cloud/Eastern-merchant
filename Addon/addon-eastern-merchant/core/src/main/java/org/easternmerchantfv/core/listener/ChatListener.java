@@ -21,7 +21,7 @@ public class ChatListener {
 
   private static final String TARGET_SERVER_HOST_DK = "mc.freakyville.dk";
   private static final String TARGET_SERVER_HOST_NET = "mc.freakyville.net";
-  private static final String API_ENDPOINT = "http://localhost:3000/api/addon-msg";
+  private static final String API_ENDPOINT = "https://71002.aspitcloud.dk/api/addon-msg";
   private static final String START_MARKER = "-={";
   private static final String END_MARKER = "Medlemmer:";
 

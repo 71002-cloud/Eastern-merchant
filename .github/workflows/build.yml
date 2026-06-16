@@ -1,0 +1,46 @@
+name: LabyAddon Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: Addon/addon-eastern-merchant
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'corretto'
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          validate-wrappers: true
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build --full-stacktrace
+
+      - name: Create Release Artifact
+        run: ./gradlew createReleaseJar
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: Artifacts
+          path: Addon/addon-eastern-merchant/build/libs/*-release.jar
