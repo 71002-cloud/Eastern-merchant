@@ -36,7 +36,7 @@ function extratData(data) {
     for (const item of data) {
         const time = makeTimeMinutes(item.expires_at);
 
-        if (time <= 180) {
+        if (time <= 180 && time > 0) {
             cellsToTrack.add(item.id);
             if (!hasSend[item.id]) {
                 hasSend[item.id] = { hasSend3hour: false, hasSend1hour: false };
