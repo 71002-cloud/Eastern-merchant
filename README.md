@@ -27,13 +27,13 @@ The system follows this data flow:
 
 ## Deployment
 
-| Component   | Platform                        | Notes                                      |
-|-------------|---------------------------------|--------------------------------------------|
-| Worker API  | cPanel (school) — aspitcloud.dk | Node.js App, runs Express on port 3000     |
-| Discord Bot | Render — Background Worker      | Free tier, runs 24/7, no HTTP needed       |
-| Frontend    | Netlify                         | Static, env var `VITE_API_URL` for API URL |
-| Database    | Supabase                        | Table: `ce_info`                           |
-| Addon JAR   | GitHub Releases                 | Built and published via GitHub Actions     |
+| Component   | Platform                        | Notes                                              |
+|-------------|---------------------------------|----------------------------------------------------|
+| Worker API  | cPanel (school) — aspitcloud.dk | Node.js App, runs Express on port 3000             |
+| Discord Bot | cPanel (school) — aspitcloud.dk | Runs via PM2 over SSH, persistent background process |
+| Frontend    | Netlify                         | Static, env var `VITE_API_URL` for API URL         |
+| Database    | Supabase                        | Table: `ce_info`                                   |
+| Addon JAR   | GitHub Releases                 | Built and published via GitHub Actions             |
 
 ### Releasing a new addon version
 
@@ -50,7 +50,7 @@ GitHub Actions will build the JAR and attach it to a GitHub Release automaticall
 - Polls Supabase every 5 minutes
 - Sends alerts at 3-hour and 1-hour thresholds
 - Pings Discord roles based on cell type and blok
-- Deployed on Render as a Background Worker
+- Deployed on cPanel via PM2 over SSH
 
 ### Express Worker (`backend/worker`)
 - Receives cell data from the addon via `POST /api/addon-msg`
