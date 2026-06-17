@@ -23,6 +23,7 @@ public class ChatListener {
   private static final String TARGET_SERVER_HOST_NET = "mc.freakyville.net";
   private static final String API_ENDPOINT = "https://71002.aspitcloud.dk/api/addon-msg";
   private static final String START_MARKER = "-={";
+  private static final String START_MARKER_ALT = "-=(";
   private static final String END_MARKER = "Medlemmer:";
 
   private final EasternMerchantFvAddon addon;
@@ -122,9 +123,10 @@ public class ChatListener {
     }
 
     // START marker
-    if (msg.contains(START_MARKER)
+    if ((msg.contains(START_MARKER) || msg.contains(START_MARKER_ALT))
       && isServerSystemMessage(chatMessage)
-      && !hasNamePrefixBeforeMarker(msg, START_MARKER)) {
+      && !hasNamePrefixBeforeMarker(msg, START_MARKER)
+      && !hasNamePrefixBeforeMarker(msg, START_MARKER_ALT)) {
       capturing = true;
       captureStartTime = Instant.now();
       addon.logger().info("Started capturing chat block");

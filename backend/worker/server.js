@@ -32,9 +32,9 @@ const cellTypes = {
 
 
 function extratData(data) {
-    const id = data.match(/-={ \s*(\w+) /)?.[1];
-    const owner = data.match(/Ejer:\s*(.+)/)?.[1];
-    const time = data.match(/Tid: \s*(.+)/)?.[1];
+    const id = data.match(/-=[{(]\s*(\w+):? /)?.[1] ?? null;
+    const owner = data.match(/Ejer:\s*(.+)/)?.[1] ?? null;
+    const time = data.match(/Tid: \s*(.+)/)?.[1] ?? null;
     if (!id || !owner || !time) {
       return null;
     }

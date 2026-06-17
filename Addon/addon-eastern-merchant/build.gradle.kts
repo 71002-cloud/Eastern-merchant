@@ -6,7 +6,7 @@ plugins {
 val versions = providers.gradleProperty("net.labymod.minecraft-versions").get().split(";")
 
 group = "org.easternmerchantfv"
-version = providers.environmentVariable("VERSION").getOrElse("1.0.0")
+version = providers.environmentVariable("VERSION").getOrElse("1.0.1")
 
 labyMod {
     defaultPackageName = "org.easternmerchantfv" //change this to your main package name (used by all modules)
@@ -24,7 +24,7 @@ labyMod {
 
     addonInfo {
         namespace = "easternmerchantfv"
-        displayName = "Eastern Merchant FV addon"
+        displayName = "EMFV Addon"
         author = "Lukas Majcherek"
         description = "Eastern Merchant FV addon"
         minecraftVersion = "*"
