@@ -7,12 +7,22 @@ import CellBlok from './CellBlok';
 export default function Main() {
     const [response, setResponse] = useState(null);
     const [sortedResponse, setSortedResponse] = useState(null);
+    const [error, setError] = useState(null);
     const [underDay, setUnderDay] = useState(true);
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
-        getCellInfo().then(res => setResponse(res));
-    }, [0]);
+        getCellInfo()
+            .then(res => {
+                setResponse(res);
+                setError(null);
+            })
+            .catch(err => {
+                setResponse([]);
+                setSortedResponse([]);
+                setError(err?.message || "Failed to load cell data");
+            });
+    }, []);
 
     function handleSearchChange(event) {
         setSearchValue(event.target.value);
@@ -60,6 +70,7 @@ export default function Main() {
                     <FilterBtn label="All" isActive={!underDay} onClick={() => setUnderDay(false)} />
                 </div>
                 <div className="cell-display">
+                    {error ? <p>{error}</p> : null}
                     {cellBloks}
                 </div>
             </div>

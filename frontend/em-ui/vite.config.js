@@ -8,4 +8,13 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://71002.aspitcloud.dk',
+        changeOrigin: true,
+        secure: true
+      }
+    }
+  }
 })
