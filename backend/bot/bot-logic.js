@@ -15,7 +15,7 @@ let hasSend = {
 async function getDataFromSupabase() {
     const { data, error } =  await supabase
         .from('ce_info')
-        .select('id, owner, expires_at, type, blok')
+        .select('id, owner, expires_at, type, blok, location')
     if (error) {
         throw new Error(`Error fetching data from Supabase: ${error.message}`);
     }
@@ -48,6 +48,7 @@ function extratData(data) {
                 expires_in_minutes: time,
                 type: item.type,
                 blok: item.blok,
+                location: item.location,
                 hasSend3hour: hasSend[item.id].hasSend3hour,
                 hasSend1hour: hasSend[item.id].hasSend1hour
             });
@@ -84,7 +85,16 @@ function buildAlertMessage(item, thresholdMinutes, thresholdName) {
     const roleId = roleIdMap[roleName];
     const mention = roleId ? `<@&${roleId}>` : `@${roleName}`;
     
-    return `⚠️ ${mention} ID: ${item.id}, Owner: ${item.owner}, Expires in: ca. ${thresholdName}`;
+    const color = thresholdMinutes <= 60 ? 0x1395b2 : 0x0f7a96;
+
+    return {
+        content: `⚠️ ${mention}`,
+        embeds: [{
+            title: `${item.id.toUpperCase()}${item.location ? ` - ${item.location}` : ""}`,
+            color,
+            description: `**Ejer:** \`${item.owner}\`\n**Tid:** ca. ${thresholdName}`
+        }]
+    };
 }
 
 function makeMessage(data) {
@@ -102,7 +112,7 @@ function makeMessage(data) {
         }
     }
 
-    return messages.join('\n');
+    return messages;
 }
 
 async function runner() {
@@ -112,13 +122,15 @@ async function runner() {
     if (data.length === 0) return;
     
     const message = makeMessage(data);
-    if (!message || message.trim().length === 0) return;
-    
-    await sendBotMessage(message);
+    if (!message || message.length === 0) return;
+
+    for (const msg of message) {
+        await sendBotMessage(msg);
+    }
 }
 
-async function sendBotMessage(text) {
-    await sendStringToChannel(text);
+async function sendBotMessage(payload) {
+    await sendStringToChannel(payload);
 }
 
 module.exports = {

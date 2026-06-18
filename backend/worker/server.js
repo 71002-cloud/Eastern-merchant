@@ -35,10 +35,11 @@ function extratData(data) {
     const id = data.match(/-=[{(]\s*(\w+):? /)?.[1] ?? null;
     const owner = data.match(/Ejer:\s*(.+)/)?.[1] ?? null;
     const time = data.match(/Tid: \s*(.+)/)?.[1] ?? null;
+    const location = data.match(/:\s*([^)]+?)\s*\)=-/)?.[1] ?? null;
     if (!id || !owner || !time) {
       return null;
     }
-    return {id, owner, time};
+    return {id, owner, time, location};
 }
 //  {int} dage, {int} timer, {int} minutter
 function makeTimeMinutes(timeStr) {
@@ -62,7 +63,8 @@ function processData(data, timestamp) {
         expires_at,
         blok,
         type,
-        last_addon_updated: timestamp
+        last_addon_updated: timestamp,
+        location: extractedData.location
       };
       } else {
         console.warn(`Unknown cell ID: ${extractedData.id}`);
@@ -76,7 +78,8 @@ function makeDatabaseResponseReady(data) {
     owner: data.owner,
     time_remaining: timeRemaining,
     blok: data.blok,
-    type: data.type
+    type: data.type,
+    location: data.location
   };
 }
 
@@ -92,7 +95,7 @@ app.post("/api/addon-msg", async (req, res) => {
 
   const { data, error } = await supabase
     .from("ce_info")
-    .upsert(processDataResult, { onConflict: "id" });
+    .upsert(Object.fromEntries(Object.entries(processDataResult).filter(([, v]) => v !== null)), { onConflict: "id" });
 
     return res.json({ success: !error, error });
 });
@@ -101,7 +104,7 @@ app.post("/api/addon-msg", async (req, res) => {
 app.get("/api/front", async (req, res) => {
   let query = supabase
     .from("ce_info")
-    .select("id, owner, expires_at, blok, type");
+    .select("id, owner, expires_at, blok, type, location");
 
   const { data, error } = await query;
 

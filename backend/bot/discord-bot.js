@@ -64,14 +64,14 @@ async function getChannel() {
   return channel;
 }
 
-async function sendStringToChannel(text) {
-  if (typeof text !== "string" || text.trim().length === 0) {
-    throw new Error("sendStringToChannel(text) requires a non-empty string");
+async function sendStringToChannel(payload) {
+  if (!payload || (typeof payload !== "string" && typeof payload !== "object")) {
+    throw new Error("sendStringToChannel requires a string or message payload");
   }
 
   try {
     const channel = await getChannel();
-    await channel.send(text);
+    await channel.send(payload);
   } catch (error) {
     cachedChannel = null;
     throw error;

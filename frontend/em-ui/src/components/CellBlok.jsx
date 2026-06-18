@@ -47,6 +47,7 @@ export default function CellBlok(props) {
     return (
         <div className="cell-blok" style={style()}>
             <h1>{props.id.toUpperCase()}</h1>
+            {props.location && <p className="location">Lokation: {props.location}</p>}
             <p>Ejer: {props.owner}</p>
             <p>Tid: {formatTimeRemaining(props.time_remaining)}</p>
         </div>

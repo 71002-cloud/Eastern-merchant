@@ -1,6 +1,4 @@
-const API_URL = import.meta.env.PROD
-    ? "/api/front"
-    : (import.meta.env.VITE_API_URL || "/api/front");
+const API_URL = "https://71002.aspitcloud.dk/api/front"
 
 export async function getCellInfo() {
     const response = await fetch(API_URL);

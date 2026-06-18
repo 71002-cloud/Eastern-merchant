@@ -58,6 +58,7 @@ export default function Main() {
             id={cell.id}
             owner={cell.owner}
             time_remaining={cell.time_remaining}
+            location={cell.location}
         />
     ));
 
