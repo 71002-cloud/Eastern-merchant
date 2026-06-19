@@ -1,4 +1,4 @@
-const API_URL = "https://71002.aspitcloud.dk/api/front"
+const API_URL = "/api/front"
 
 export async function getCellInfo() {
     const response = await fetch(API_URL);
