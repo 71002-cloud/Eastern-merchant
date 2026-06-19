@@ -11,7 +11,6 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
-app.use(cors());
 
 const cellTypes = {
   a:   { blok: "a", type: "n" },
@@ -86,6 +85,10 @@ function makeDatabaseResponseReady(data) {
 app.post("/api/addon-msg", async (req, res) => {
     const cellData = req.body.cell;
     const last_addon_updated = req.body.timestamp;
+    if (typeof cellData !== "string" || typeof last_addon_updated !== "string") {
+        return res.status(400).json({ error: "Invalid request body" });
+    }
+
     const processDataResult = processData(cellData, last_addon_updated);
 
   if (!processDataResult) {
@@ -97,11 +100,11 @@ app.post("/api/addon-msg", async (req, res) => {
     .from("ce_info")
     .upsert(Object.fromEntries(Object.entries(processDataResult).filter(([, v]) => v !== null)), { onConflict: "id" });
 
-    return res.json({ success: !error, error });
+    return res.json({ success: !error, error: error ? error.message : null });
 });
 
 // API endpoint
-app.get("/api/front", async (req, res) => {
+app.get("/api/front", cors({ origin: process.env.ALLOWED_ORIGIN }), async (req, res) => {
   let query = supabase
     .from("ce_info")
     .select("id, owner, expires_at, blok, type, location");

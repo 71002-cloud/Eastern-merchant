@@ -25,12 +25,14 @@ public class ChatListener {
   private static final String START_MARKER = "-={";
   private static final String START_MARKER_ALT = "-=(";
   private static final String END_MARKER = "Medlemmer:";
+  private static final int MAX_LINES = 5;
 
   private final EasternMerchantFvAddon addon;
 
   private boolean capturing = false;
   private final StringBuilder capturedBlock = new StringBuilder();
   private Instant captureStartTime;
+  private int capturedLineCount = 0;
 
   private final HttpClient httpClient = HttpClient.newHttpClient();
 
@@ -82,15 +84,22 @@ public class ChatListener {
   }
 
   private void appendLine(String msg) {
+    if (capturedLineCount >= MAX_LINES) {
+      resetCapture();
+      return;
+    }
+
     if (capturedBlock.length() > 0) {
       capturedBlock.append(System.lineSeparator());
     }
     capturedBlock.append(msg);
+    capturedLineCount++;
   }
 
   private void resetCapture() {
     capturing = false;
     capturedBlock.setLength(0);
+    capturedLineCount = 0;
   }
 
   private boolean isServerSystemMessage(ChatMessage chatMessage) {
@@ -140,6 +149,10 @@ public class ChatListener {
       && msg.contains(END_MARKER)
       && !hasNamePrefixBeforeMarker(msg, END_MARKER)) {
       appendLine(msg);
+      if (capturedLineCount != 4) {
+        resetCapture();
+        return;
+      }
       String payload = capturedBlock.toString().trim();
       addon.logger().info("Captured block:\n" + payload);
       addon.logger().info("Stopped capturing chat block");

@@ -31,15 +31,15 @@ export default function Main() {
     function sort(response) {
         if (underDay === true) {
             const filteredResponse = response?.filter(cell => cell.time_remaining < 24 * 60 && cell.time_remaining != 0);
-            const sortedResponse = filteredResponse?.sort((a, b) => a.time_remaining - b.time_remaining);
-            setSortedResponse(sortedResponse);
+            const sortedRes = filteredResponse?.sort((a, b) => a.time_remaining - b.time_remaining);
+            setSortedResponse(sortedRes);
         } else {
-            const sortedResponse = response?.sort((a, b) => {
+            const sortedRes = response?.slice().sort((a, b) => {
                 if (a.time_remaining === 0 && b.time_remaining !== 0) return 1;
                 if (b.time_remaining === 0 && a.time_remaining !== 0) return -1;
                 return a.time_remaining - b.time_remaining;
             });
-            setSortedResponse(sortedResponse);
+            setSortedResponse(sortedRes);
         }
     }
 
