@@ -149,7 +149,7 @@ public class ChatListener {
       && msg.contains(END_MARKER)
       && !hasNamePrefixBeforeMarker(msg, END_MARKER)) {
       appendLine(msg);
-      if (capturedLineCount != 4) {
+      if (capturedLineCount != 5) {
         resetCapture();
         return;
       }
