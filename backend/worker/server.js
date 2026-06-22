@@ -6,11 +6,21 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 
 const express = require("express");
 const cors = require("cors");
+const ratelimit = require("express-rate-limit");
+
+const limiter = ratelimit({
+  windowMs: 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+app.set("trust proxy", 1);
+app.use(limiter);
 
 const cellTypes = {
   a:   { blok: "a", type: "n" },
